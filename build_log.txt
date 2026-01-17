@@ -1,0 +1,219 @@
+﻿
+> textmaster@0.1.0 build
+> react-scripts build
+
+node.exe : node:inter
+nal/modules/cjs/loade
+r:1408
+At C:\Program Files\n
+odejs\npm.ps1:29 
+char:3
++   & $NODE_EXE 
+$NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (node:in   
+ ternal/modules/c    
+js/loader:1408:S    
+tring) [], Remot    
+eException
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+  throw err;
+  ^
+
+Error: Cannot find 
+module 'ajv/dist/comp
+ile/codegen'
+Require stack:
+- D:\Coding 
+Playground\React 
+Playground\React JS T
+utorials\textmaster\a
+dvanced model\node_mo
+dules\ajv-keywords\di
+st\definitions\typeof
+.js
+- D:\Coding 
+Playground\React 
+Playground\React JS T
+utorials\textmaster\a
+dvanced model\node_mo
+dules\ajv-keywords\di
+st\keywords\typeof.js
+- D:\Coding 
+Playground\React 
+Playground\React JS T
+utorials\textmaster\a
+dvanced model\node_mo
+dules\ajv-keywords\di
+st\keywords\index.js
+- D:\Coding 
+Playground\React 
+Playground\React JS T
+utorials\textmaster\a
+dvanced model\node_mo
+dules\ajv-keywords\di
+st\index.js
+- D:\Coding 
+Playground\React 
+Playground\React JS T
+utorials\textmaster\a
+dvanced model\node_mo
+dules\schema-utils\di
+st\validate.js
+- D:\Coding 
+Playground\React 
+Playground\React JS T
+utorials\textmaster\a
+dvanced model\node_mo
+dules\schema-utils\di
+st\index.js
+- D:\Coding 
+Playground\React 
+Playground\React JS T
+utorials\textmaster\a
+dvanced model\node_mo
+dules\terser-webpack-
+plugin\dist\index.js
+- D:\Coding 
+Playground\React 
+Playground\React JS T
+utorials\textmaster\a
+dvanced model\node_mo
+dules\react-scripts\c
+onfig\webpack.config.
+js
+- D:\Coding 
+Playground\React 
+Playground\React JS T
+utorials\textmaster\a
+dvanced model\node_mo
+dules\react-scripts\s
+cripts\build.js
+    at Function._reso
+lveFilename (node:int
+ernal/modules/cjs/loa
+der:1405:15)
+    at 
+defaultResolveImpl (n
+ode:internal/modules/
+cjs/loader:1061:19)
+    at resolveForCJSW
+ithHooks (node:intern
+al/modules/cjs/loader
+:1066:22)
+    at 
+Function._load (node:
+internal/modules/cjs/
+loader:1215:37)
+    at TracingChannel
+.traceSync (node:diag
+nostics_channel:322:1
+4)
+    at 
+wrapModuleLoad (node:
+internal/modules/cjs/
+loader:235:24)
+    at 
+Module.require (node:
+internal/modules/cjs/
+loader:1491:12)
+    at require (node:
+internal/modules/help
+ers:135:16)
+    at 
+Object.<anonymous> 
+(D:\Coding 
+Playground\React 
+Playground\React JS T
+utorials\textmaster\a
+dvanced model\node_mo
+dules\ajv-keywords\di
+st\definitions\typeof
+.js:3:19)
+    at 
+Module._compile (node
+:internal/modules/cjs
+/loader:1734:14) {
+  code: 
+'MODULE_NOT_FOUND',
+  requireStack: [
+    'D:\\Coding 
+Playground\\React 
+Playground\\React JS 
+Tutorials\\textmaster
+\\advanced model\\nod
+e_modules\\ajv-keywor
+ds\\dist\\definitions
+\\typeof.js',
+    'D:\\Coding 
+Playground\\React 
+Playground\\React JS 
+Tutorials\\textmaster
+\\advanced model\\nod
+e_modules\\ajv-keywor
+ds\\dist\\keywords\\t
+ypeof.js',
+    'D:\\Coding 
+Playground\\React 
+Playground\\React JS 
+Tutorials\\textmaster
+\\advanced model\\nod
+e_modules\\ajv-keywor
+ds\\dist\\keywords\\i
+ndex.js',
+    'D:\\Coding 
+Playground\\React 
+Playground\\React JS 
+Tutorials\\textmaster
+\\advanced model\\nod
+e_modules\\ajv-keywor
+ds\\dist\\index.js',
+    'D:\\Coding 
+Playground\\React 
+Playground\\React JS 
+Tutorials\\textmaster
+\\advanced model\\nod
+e_modules\\schema-uti
+ls\\dist\\validate.js
+',
+    'D:\\Coding 
+Playground\\React 
+Playground\\React JS 
+Tutorials\\textmaster
+\\advanced model\\nod
+e_modules\\schema-uti
+ls\\dist\\index.js',
+    'D:\\Coding 
+Playground\\React 
+Playground\\React JS 
+Tutorials\\textmaster
+\\advanced model\\nod
+e_modules\\terser-web
+pack-plugin\\dist\\in
+dex.js',
+    'D:\\Coding 
+Playground\\React 
+Playground\\React JS 
+Tutorials\\textmaster
+\\advanced model\\nod
+e_modules\\react-scri
+pts\\config\\webpack.
+config.js',
+    'D:\\Coding 
+Playground\\React 
+Playground\\React JS 
+Tutorials\\textmaster
+\\advanced model\\nod
+e_modules\\react-scri
+pts\\scripts\\build.j
+s'
+  ]
+}
+
+Node.js v23.11.0

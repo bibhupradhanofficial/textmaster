@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   FiType, FiCopy, FiTrash2, FiMinimize2, 
-  FiCode, FiAtSign, FiRefreshCw, FiHash, FiSlash, 
+  FiCode, FiAtSign, FiSlash, 
   FiAlignLeft, FiAlignJustify, FiTerminal, FiList, FiArrowDown, FiArrowUp, FiLink, FiRotateCcw
 } from "react-icons/fi";
 

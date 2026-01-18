@@ -60,7 +60,7 @@ export default function About(props) {
                         </p>
                         <div className="d-flex gap-3 mt-3">
                             <a href="https://www.linkedin.com/in/bibhupradhanofficial" className="btn btn-vibrant btn-sm text-white text-decoration-none">LinkedIn</a>
-                            <a href="https://github.com/bibhupradhanofficial" className="btn btn-outline-primary btn-sm text-decoration-none">GitHub</a>
+                            <a href="https://github.com/bibhupradhanofficial" className="btn btn-vibrant btn-sm text-white text-decoration-none">GitHub</a>
                         </div>
                     </Section>
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { FiGithub, FiTwitter, FiGlobe } from "react-icons/fi";
+import { FiLinkedin, FiGithub, FiYoutube, FiInstagram, FiTwitter } from "react-icons/fi";
 
 export default function Footer(props) {
   const isDark = props.mode === 'dark';
@@ -15,14 +15,20 @@ export default function Footer(props) {
     >
       <div className="container text-center">
         <div className="d-flex justify-content-center gap-4 mb-3">
-          <a href="#" className={`text-${isDark ? 'light' : 'dark'} opacity-50 hover-opacity-100 transition-opacity`}>
+          <a href="/" className={`text-${isDark ? 'light' : 'dark'} opacity-50 hover-opacity-100 transition-opacity`}>
+            <FiLinkedin size={20} />
+          </a>
+          <a href="/" className={`text-${isDark ? 'light' : 'dark'} opacity-50 hover-opacity-100 transition-opacity`}>
             <FiGithub size={20} />
           </a>
-          <a href="#" className={`text-${isDark ? 'light' : 'dark'} opacity-50 hover-opacity-100 transition-opacity`}>
-            <FiTwitter size={20} />
+          <a href="/" className={`text-${isDark ? 'light' : 'dark'} opacity-50 hover-opacity-100 transition-opacity`}>
+            <FiYoutube size={20} />
           </a>
-          <a href="#" className={`text-${isDark ? 'light' : 'dark'} opacity-50 hover-opacity-100 transition-opacity`}>
-            <FiGlobe size={20} />
+          <a href="/" className={`text-${isDark ? 'light' : 'dark'} opacity-50 hover-opacity-100 transition-opacity`}>
+            <FiInstagram size={20} />
+          </a>
+          <a href="/" className={`text-${isDark ? 'light' : 'dark'} opacity-50 hover-opacity-100 transition-opacity`}>
+            <FiTwitter size={20} />
           </a>
         </div>
         <p className={`mb-0 small ${isDark ? 'text-white-50' : 'text-muted'}`}>

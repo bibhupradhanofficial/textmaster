@@ -1,55 +1,84 @@
-import React from 'react'
-
-
+import React from 'react';
+import { motion } from 'framer-motion';
+import { FiMail, FiPhone, FiMapPin, FiSend } from 'react-icons/fi';
 
 export default function Contact(props) {
-    let myStyle = {
-        color: props.mode === 'dark' ? 'white' : '#042743',
-        backgroundColor: props.mode === 'dark' ? '#13466e' : 'white',
-        borderColor: props.mode === 'dark' ? 'white' : ''
-    }
+    const isDark = props.mode === 'dark';
+
+    const ContactCard = ({ icon: Icon, title, value, delay }) => (
+        <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay }}
+            className="glass-card text-center p-4 h-100"
+        >
+            <div className="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3" 
+                style={{ background: isDark ? 'rgba(99, 102, 241, 0.2)' : 'rgba(99, 102, 241, 0.1)' }}>
+                <Icon size={24} className="text-primary" />
+            </div>
+            <h3 className="h5 fw-bold mb-2">{title}</h3>
+            <p className={`mb-0 ${isDark ? 'text-white-50' : 'text-muted'}`}>{value}</p>
+        </motion.div>
+    );
 
     return (
-        <div className="container" style={{ color: props.mode === 'dark' ? 'white' : '' }}>
-            <h1 className="my-3">Contact Us</h1>
-            <div className="accordion" id="accordionExample">
-                <div className="accordion-item">
-                    <h2 className="accordion-header" id="headingOne">
-                        <button className="accordion-button" type="button" style={myStyle} data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Email
-                        </button>
-                    </h2>
-                    <div id="collapseOne" className="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                        <div className="accordion-body" style={myStyle}>
-                            email@gmail.com
-                        </div>
-                    </div>
-                </div>
-                <div className="accordion-item" style={myStyle}>
-                    <h2 className="accordion-header" id="headingTwo">
-                        <button className="accordion-button collapsed" style={myStyle} type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Phone Number
-                        </button>
-                    </h2>
-                    <div id="collapseTwo" className="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                        <div className="accordion-body" style={myStyle}>
-                            +91 xxxxxxxxx
-                        </div>
-                    </div>
-                </div>
-                {/* <div className="accordion-item">
-                    <h2 className="accordion-header" id="headingThree">
-                        <button className="accordion-button collapsed" style={myStyle} type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Address
-                        </button>
-                    </h2>
-                    <div id="collapseThree" className="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                        <div className="accordion-body" style={myStyle}>
-                            <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the  though the transition does limit overflow.
-                        </div>
-                    </div>
-                </div> */}
+        <div className="container py-5">
+            <div className="text-center mb-5">
+                <h1 className="display-4 fw-bold mb-3" style={{ 
+                    background: isDark 
+                        ? 'linear-gradient(to right, #818cf8, #f472b6)' 
+                        : 'linear-gradient(to right, #6366f1, #ec4899)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                }}>
+                    Get in Touch
+                </h1>
+                <p className={`lead ${isDark ? 'text-white-50' : 'text-muted'}`}>
+                    Have questions? We'd love to hear from you.
+                </p>
             </div>
+
+            <div className="row g-4 mb-5">
+                <div className="col-md-4">
+                    <ContactCard icon={FiMail} title="Email" value="contact@textmaster.com" delay={0.1} />
+                </div>
+                <div className="col-md-4">
+                    <ContactCard icon={FiPhone} title="Phone" value="+1 (555) 123-4567" delay={0.2} />
+                </div>
+                <div className="col-md-4">
+                    <ContactCard icon={FiMapPin} title="Location" value="San Francisco, CA" delay={0.3} />
+                </div>
+            </div>
+
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="glass-card"
+            >
+                <div className="row justify-content-center">
+                    <div className="col-lg-8 text-center">
+                        <h3 className="fw-bold mb-4">Send us a message</h3>
+                        <div className="row g-3">
+                            <div className="col-md-6">
+                                <input type="text" className="form-control" placeholder="Your Name" />
+                            </div>
+                            <div className="col-md-6">
+                                <input type="email" className="form-control" placeholder="Your Email" />
+                            </div>
+                            <div className="col-12">
+                                <textarea className="form-control" rows="5" placeholder="Message"></textarea>
+                            </div>
+                            <div className="col-12">
+                                <button className="btn btn-vibrant px-5 py-2 mt-3">
+                                    <FiSend className="me-2" /> Send Message
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
         </div>
-    )
+    );
 }

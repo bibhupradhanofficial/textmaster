@@ -40,8 +40,8 @@ function App() {
     <>
       <Router>
         <Navbar title="TextMaster" mode={mode} toggleMode={toggleMode} />
-        <Alert alert={alert} />
-        <div className="container my-3">
+        <Alert alert={alert} mode={mode} />
+        <div className="main-content">
           <Switch>
             <Route exact path="/">
               <TextArea

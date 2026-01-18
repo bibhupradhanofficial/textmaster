@@ -1,321 +1,349 @@
 import React, { useState } from "react";
-
+import { motion } from "framer-motion";
+import { 
+  FiType, FiCopy, FiTrash2, FiMinimize2, 
+  FiCode, FiAtSign, FiRefreshCw, FiHash, FiSlash, 
+  FiAlignLeft, FiAlignJustify, FiTerminal, FiList, FiArrowDown, FiArrowUp, FiLink, FiRotateCcw
+} from "react-icons/fi";
 
 export default function TextArea(props) {
   const [text, setText] = useState("");
+  const [history, setHistory] = useState([]);
   const isDarkMode = props.mode === "dark";
 
-  const textareaClear = () => {
+  const showSuccess = (msg) => props.showAlert(msg, "success");
+  const showWarning = (msg) => props.showAlert(msg, "warning");
+  const showError = (msg) => props.showAlert(msg, "danger");
+
+  // --- History Management ---
+  const saveToHistory = () => {
+    setHistory(prev => [...prev, text]);
+  };
+
+  const handleUndo = () => {
+    if (history.length === 0) return;
+    const previousText = history[history.length - 1];
+    const newHistory = history.slice(0, -1);
+    setHistory(newHistory);
+    setText(previousText);
+    showSuccess("Undid last action!");
+  };
+
+  // --- Handlers ---
+  const handleTextTransform = (type) => {
+    if (!text) return;
+    saveToHistory();
+    let newText = text;
+    switch (type) {
+      case 'upper': newText = text.toUpperCase(); break;
+      case 'lower': newText = text.toLowerCase(); break;
+      case 'title': 
+        newText = text.toLowerCase().split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" "); 
+        break;
+      case 'sentence': 
+        newText = text.toLowerCase().split(". ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(". "); 
+        break;
+      case 'alternating':
+        newText = text.split("").map((c, i) => i % 2 === 0 ? c.toLowerCase() : c.toUpperCase()).join("");
+        break;
+      case 'capitalize':
+        newText = text.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+        break;
+      case 'reverse': newText = text.split("").reverse().join(""); break;
+      case 'slugify':
+        newText = text.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+        break;
+      default: break;
+    }
+    setText(newText);
+    showSuccess(`Text transformed!`);
+  };
+
+  const handleFormatting = (type) => {
+    if (!text) return;
+    saveToHistory();
+    let newText = text;
+    switch (type) {
+      case 'remove-spaces': newText = text.split(/[ ]+/).join(" "); break;
+      case 'remove-lines': newText = text.replace(/\n/g, " "); break;
+      case 'add-lines': newText = text.replace(/\. /g, ".\n"); break;
+      case 'remove-numbers': newText = text.replace(/[0-9]/g, ""); break;
+      case 'remove-special': newText = text.replace(/[^a-zA-Z0-9\s]/g, ""); break;
+      case 'remove-duplicates':
+        newText = [...new Set(text.split('\n'))].join('\n');
+        break;
+      case 'sort-lines-az':
+        newText = text.split('\n').sort().join('\n');
+        break;
+      case 'sort-lines-za':
+        newText = text.split('\n').sort().reverse().join('\n');
+        break;
+      case 'add-bullets':
+        newText = text.split('\n').map(line => `• ${line}`).join('\n');
+        break;
+      case 'trim-lines':
+        newText = text.split('\n').map(line => line.trim()).join('\n');
+        break;
+      default: break;
+    }
+    setText(newText);
+    showSuccess("Formatting applied!");
+  };
+
+  const handleUtils = (type) => {
+    if (!text) return;
+    saveToHistory();
+    try {
+      if (type === 'extract-email') {
+        const emails = text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+        if (emails) {
+          setText(emails.join("\n"));
+          showSuccess("Emails extracted!");
+        } else {
+          showWarning("No emails found.");
+        }
+      } else if (type === 'b64-encode') {
+        setText(btoa(text));
+        showSuccess("Encoded to Base64");
+      } else if (type === 'b64-decode') {
+        setText(atob(text));
+        showSuccess("Decoded from Base64");
+      } else if (type === 'text-binary') {
+        setText(text.split('').map(char => char.charCodeAt(0).toString(2).padStart(8, '0')).join(' '));
+        showSuccess("Converted to Binary");
+      }
+    } catch (e) {
+      showError("Operation failed. Check input.");
+    }
+  };
+
+  const handleCopy = () => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    showSuccess("Copied to clipboard!");
+  };
+
+  const handleClear = () => {
+    saveToHistory();
     setText("");
-    props.showAlert("Text area has been cleared.", "success");
+    showSuccess("Text cleared!");
   };
 
-  const textUppercase = () => {
-    setText(text.toUpperCase());
-    props.showAlert("Text has been converted to uppercase.", "success");
-  };
-
-  const textLowercase = () => {
-    setText(text.toLowerCase());
-    props.showAlert("Text has been converted to lowercase.", "success");
-  };
-
-  const textTitleCase = () => {
-    const titleCase = text
-      .toLowerCase()
-      .split(" ")
-      .map((word) => {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      })
-      .join(" ");
-    setText(titleCase);
-    props.showAlert("Text has been converted to title case.", "success");
-  };
-
-  const textSentenceCase = () => {
-    const sentenceCase = text
-      .toLowerCase()
-      .split(". ")
-      .map((sentence) => {
-        return sentence.charAt(0).toUpperCase() + sentence.slice(1);
-      })
-      .join(". ");
-    setText(sentenceCase);
-    props.showAlert("Text has been converted to sentence case.", "success");
-  };
-
-  const textAlternatingCase = () => {
-    const alternatingCase = text
-      .split("")
-      .map((char, index) => {
-        return index % 2 === 0 ? char.toLowerCase() : char.toUpperCase();
-      })
-      .join("");
-    setText(alternatingCase);
-    props.showAlert("Text has been converted to alternating case.", "success");
-  };
-
-  const extraspacesRemove = () => {
-    setText(text.split(/[ ]+/).join(" "));
-    props.showAlert("Extra spaces has been removed.", "success");
-  };
-
-  const removeLineBreaks = () => {
-    setText(text.replace(/\n/g, " "));
-    props.showAlert("Line breaks have been removed.", "success");
-  };
-
-  const addLineBreaks = () => {
-    setText(text.replace(/\. /g, ".\n"));
-    props.showAlert("Line breaks have been added after sentences.", "success");
-  };
-
-  const capitalizeFirstLetter = () => {
-    const capitalized = text
-      .split(" ")
-      .map((word) => {
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-      })
-      .join(" ");
-    setText(capitalized);
-    props.showAlert(
-      "First letter of each word has been capitalized.",
-      "success"
-    );
-  };
-
-  const textReverse = () => {
-    setText(text.split("").reverse().join(""));
-    props.showAlert("Text has been reversed.", "success");
-  };
-
-  const textCopy = () => {
-    const previewText = text.length > 0 ? text : "Nothing to preview!";
-    const tempTextArea = document.createElement("textarea");
-    tempTextArea.value = previewText;
-    document.body.appendChild(tempTextArea);
-    tempTextArea.select();
-    document.execCommand("copy");
-    document.body.removeChild(tempTextArea);
-    props.showAlert("Preview text has been copied.", "success");
-  };
-
-  const removeNumbers = () => {
-    setText(text.replace(/[0-9]/g, ""));
-    props.showAlert("Numbers have been removed.", "success");
-  };
-
-  const removeSpecialChars = () => {
-    setText(text.replace(/[^a-zA-Z0-9\s]/g, ""));
-    props.showAlert("Special characters have been removed.", "success");
-  };
-
-  const extractEmails = () => {
-    const emails = text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
-    if (emails) {
-      setText(emails.join("\n"));
-      props.showAlert("Emails have been extracted.", "success");
-    } else {
-      props.showAlert("No emails found!", "warning");
-    }
-  };
-
-  const base64Encode = () => {
-    try {
-      setText(btoa(text));
-      props.showAlert("Text has been Base64 encoded.", "success");
-    } catch (e) {
-      props.showAlert("Failed to encode text.", "danger");
-    }
-  };
-
-  const base64Decode = () => {
-    try {
-      setText(atob(text));
-      props.showAlert("Text has been Base64 decoded.", "success");
-    } catch (e) {
-      props.showAlert("Invalid Base64 string.", "danger");
-    }
-  };
-
-  const getTextStats = () => {
+  // --- Stats Calculation ---
+  const getStats = () => {
     const words = text.split(/\s+/).filter((word) => word.length > 0);
-    const wordCount = words.length;
-    const charCount = text.length;
-    const letterCount = text.replace(/[^a-zA-Z]/g, "").length;
-    const numberCount = text.replace(/[^0-9]/g, "").length;
-    const spaceCount = text.split("").filter((char) => char === " ").length;
-    const punctuationCount = text
-      .split("")
-      .filter((char) => /[.,!?;:]/.test(char)).length;
-    const paragraphCount = text
-      .split(/\n\s*\n/)
-      .filter((p) => p.trim().length > 0).length;
-    const sentenceCount = text
-      .split(/[.!?]+/)
-      .filter((s) => s.trim().length > 0).length;
-
-    // Calculate average word length
-    const avgWordLength =
-      wordCount > 0
-        ? (
-          words.reduce((acc, word) => acc + word.length, 0) / wordCount
-        ).toFixed(1)
-        : 0;
-
-    // Find most common words (top 3)
-    const wordFreq = {};
-    words.forEach((word) => {
-      wordFreq[word] = (wordFreq[word] || 0) + 1;
-    });
-    const commonWords = Object.entries(wordFreq)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 3)
-      .map(([word, count]) => `${word} (${count})`)
-      .join(", ");
-
+    const longestWord = words.reduce((a, b) => (a.length > b.length ? a : b), "");
     return {
-      wordCount,
-      charCount,
-      letterCount,
-      numberCount,
-      spaceCount,
-      punctuationCount,
-      paragraphCount,
-      sentenceCount,
-      avgWordLength,
-      commonWords,
+      words: words.length,
+      chars: text.length,
+      sentences: text.split(/[.!?]+/).filter((s) => s.trim().length > 0).length,
+      paragraphs: text.split(/\n\s*\n/).filter((p) => p.trim().length > 0).length,
+      readTime: (0.008 * words.length).toFixed(1),
+      speakTime: (words.length / 130).toFixed(1), // Average speaking rate 130 wpm
+      longestWord: longestWord.length > 20 ? longestWord.substring(0, 20) + "..." : longestWord || "N/A"
     };
   };
+  const stats = getStats();
 
-  const stats = getTextStats();
+  // --- Components ---
+  const ActionButton = ({ icon: Icon, label, onClick, color = "btn-vibrant" }) => (
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={onClick}
+      disabled={!text}
+      className={`btn ${color} d-flex align-items-center justify-content-center gap-2 flex-grow-1`}
+      style={{ minWidth: '140px' }}
+    >
+      {Icon && <Icon size={18} />}
+      {label}
+    </motion.button>
+  );
 
-  const renderButtonGroup = (title, buttons, groupClass = "") => (
-    <div className={`function-group ${groupClass} mb-4`}>
-      <h5 className="mb-3 text-uppercase fw-bold opacity-75">{title}</h5>
-      <div className="d-flex flex-wrap gap-2">{buttons}</div>
-    </div>
+  const StatBox = ({ label, value }) => (
+    <motion.div 
+      whileHover={{ y: -5 }}
+      className="stat-card"
+    >
+      <div className="stat-value">{value}</div>
+      <div className="stat-label">{label}</div>
+    </motion.div>
   );
 
   return (
-    <div className={`App ${isDarkMode ? "dark" : ""}`}>
-      <div className="container pb-5">
-        <h1 className="text-center mb-5 fw-bold display-4" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>{props.heading}</h1>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="container py-4"
+    >
+      <div className="text-center mb-5">
+        <h1 className="display-4 fw-bold mb-3" style={{ 
+          background: isDarkMode 
+            ? 'linear-gradient(to right, #818cf8, #f472b6)' 
+            : 'linear-gradient(to right, #6366f1, #ec4899)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          {props.heading}
+        </h1>
+        <p className={`lead ${isDarkMode ? 'text-white-50' : 'text-muted'}`}>
+          Advanced text manipulation and analysis tool
+        </p>
+      </div>
 
-        <div className="glass-card">
-          <div className="row">
-            <div className="col-md-6 mb-4">
-              <h3 className="mb-3 fw-bold">Input Text</h3>
-              <textarea
-                className={`form-control ${isDarkMode ? "dark" : ""}`}
-                id="textArea"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                rows="12"
-                placeholder="Enter your text here..."
-                style={{ resize: 'none' }}
-              ></textarea>
+      <div className="row g-4">
+        {/* Input Section */}
+        <div className="col-lg-8">
+          <div className="glass-card h-100">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h4 className="fw-bold m-0"><FiTerminal className="me-2"/>Editor</h4>
+              <div className="d-flex gap-2">
+                <motion.button 
+                  whileHover={{ scale: 1.1, rotate: -90 }} 
+                  onClick={handleUndo} 
+                  disabled={history.length === 0}
+                  className="btn btn-sm btn-outline-secondary rounded-circle p-2"
+                  title="Undo"
+                >
+                  <FiRotateCcw size={16} />
+                </motion.button>
+                <motion.button 
+                  whileHover={{ scale: 1.1 }} 
+                  onClick={handleCopy} 
+                  className="btn btn-sm btn-outline-primary rounded-circle p-2"
+                  title="Copy"
+                >
+                  <FiCopy size={16} />
+                </motion.button>
+                <motion.button 
+                  whileHover={{ scale: 1.1, rotate: 90 }} 
+                  onClick={handleClear} 
+                  className="btn btn-sm btn-outline-danger rounded-circle p-2"
+                  title="Clear"
+                >
+                  <FiTrash2 size={16} />
+                </motion.button>
+              </div>
             </div>
-            <div className="col-md-6 mb-4">
-              <h3 className="mb-3 fw-bold">Preview</h3>
-              <div
-                className={`preview-section ${isDarkMode ? "dark" : ""}`}
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontFamily: "monospace",
-                  height: "332px", // Match textarea height approx
-                  overflowY: "auto",
-                }}
-              >
-                {text.length > 0 ? text : <span className="opacity-50">Your text preview will appear here...</span>}
+            <textarea
+              className="form-control"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows="12"
+              placeholder="Type or paste your text here..."
+              style={{ resize: 'vertical', minHeight: '300px' }}
+            ></textarea>
+          </div>
+        </div>
+
+        {/* Stats Section */}
+        <div className="col-lg-4">
+          <div className="glass-card h-100">
+            <h4 className="fw-bold mb-4">Statistics</h4>
+            <div className="d-grid grid-cols-2 gap-3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+              <StatBox label="Words" value={stats.words} />
+              <StatBox label="Characters" value={stats.chars} />
+              <StatBox label="Sentences" value={stats.sentences} />
+              <StatBox label="Paragraphs" value={stats.paragraphs} />
+            </div>
+            
+            <div className="mt-4 p-3 rounded-3" style={{ background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }}>
+               <div className="d-flex justify-content-between mb-2">
+                 <span className={`small ${isDarkMode ? 'text-white-50' : 'text-muted'}`}>Longest Word:</span>
+                 <span className="fw-bold">{stats.longestWord}</span>
+               </div>
+               <div className="row text-center mt-3">
+                 <div className="col-6">
+                    <h6 className="text-uppercase text-muted small fw-bold mb-1">Reading</h6>
+                    <div className="fw-bold">{stats.readTime} m</div>
+                 </div>
+                 <div className="col-6">
+                    <h6 className="text-uppercase text-muted small fw-bold mb-1">Speaking</h6>
+                    <div className="fw-bold">{stats.speakTime} m</div>
+                 </div>
+               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tools Section */}
+        <div className="col-12">
+          <div className="glass-card">
+            <h4 className="fw-bold mb-4">Toolkit</h4>
+            
+            <div className="row g-4">
+              <div className="col-md-6 col-xl-3">
+                <div className="function-group">
+                  <h5 className="mb-3">TRANSFORM</h5>
+                  <div className="d-flex flex-column gap-2">
+                    <ActionButton label="UPPERCASE" onClick={() => handleTextTransform('upper')} icon={FiType} />
+                    <ActionButton label="lowercase" onClick={() => handleTextTransform('lower')} icon={FiType} />
+                    <ActionButton label="Title Case" onClick={() => handleTextTransform('title')} icon={FiType} />
+                    <ActionButton label="Slugify" onClick={() => handleTextTransform('slugify')} icon={FiLink} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-6 col-xl-3">
+                <div className="function-group">
+                  <h5 className="mb-3">FORMAT</h5>
+                  <div className="d-flex flex-column gap-2">
+                    <ActionButton label="Remove Spaces" onClick={() => handleFormatting('remove-spaces')} icon={FiMinimize2} />
+                    <ActionButton label="One Line" onClick={() => handleFormatting('remove-lines')} icon={FiAlignLeft} />
+                    <ActionButton label="Add Bullets" onClick={() => handleFormatting('add-bullets')} icon={FiList} />
+                    <ActionButton label="Trim Lines" onClick={() => handleFormatting('trim-lines')} icon={FiAlignJustify} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-6 col-xl-3">
+                <div className="function-group">
+                  <h5 className="mb-3">LINE OPS</h5>
+                  <div className="d-flex flex-column gap-2">
+                    <ActionButton label="Sort A-Z" onClick={() => handleFormatting('sort-lines-az')} icon={FiArrowDown} />
+                    <ActionButton label="Sort Z-A" onClick={() => handleFormatting('sort-lines-za')} icon={FiArrowUp} />
+                    <ActionButton label="Unique Lines" onClick={() => handleFormatting('remove-duplicates')} icon={FiList} />
+                    <ActionButton label="No Empty Lines" onClick={() => handleFormatting('remove-lines')} icon={FiMinimize2} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-6 col-xl-3">
+                <div className="function-group">
+                  <h5 className="mb-3">ADVANCED</h5>
+                  <div className="d-flex flex-column gap-2">
+                    <ActionButton label="Extract Emails" onClick={() => handleUtils('extract-email')} icon={FiAtSign} />
+                    <ActionButton label="Base64 Encode" onClick={() => handleUtils('b64-encode')} icon={FiCode} />
+                    <ActionButton label="Text to Binary" onClick={() => handleUtils('text-binary')} icon={FiCode} />
+                    <ActionButton label="No Special" onClick={() => handleFormatting('remove-special')} icon={FiSlash} />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-          <hr className="my-4 opacity-25" />
-
-          <div className="row">
-            <div className="col-md-4">
-              {renderButtonGroup(
-                "Text Case",
-                [
-                  <button key="uc" type="button" className="btn btn-vibrant btn-sm" onClick={textUppercase} disabled={text.length === 0}>UPPERCASE</button>,
-                  <button key="lc" type="button" className="btn btn-vibrant btn-sm" onClick={textLowercase} disabled={text.length === 0}>lowercase</button>,
-                  <button key="tc" type="button" className="btn btn-vibrant btn-sm" onClick={textTitleCase} disabled={text.length === 0}>Title Case</button>,
-                  <button key="sc" type="button" className="btn btn-vibrant btn-sm" onClick={textSentenceCase} disabled={text.length === 0}>Sentence case</button>,
-                  <button key="ac" type="button" className="btn btn-vibrant btn-sm" onClick={textAlternatingCase} disabled={text.length === 0}>aLtErNaTiNg</button>,
-                ]
-              )}
-            </div>
-            <div className="col-md-4">
-              {renderButtonGroup(
-                "Formatting",
-                [
-                  <button key="es" type="button" className="btn btn-vibrant btn-sm" onClick={extraspacesRemove} disabled={text.length === 0}>Remove Spaces</button>,
-                  <button key="rlb" type="button" className="btn btn-vibrant btn-sm" onClick={removeLineBreaks} disabled={text.length === 0}>No Line Breaks</button>,
-                  <button key="alb" type="button" className="btn btn-vibrant btn-sm" onClick={addLineBreaks} disabled={text.length === 0}>Add Line Breaks</button>,
-                  <button key="cfl" type="button" className="btn btn-vibrant btn-sm" onClick={capitalizeFirstLetter} disabled={text.length === 0}>Capitalize First</button>,
-                ]
-              )}
-            </div>
-            <div className="col-md-4">
-              {renderButtonGroup(
-                "Actions",
-                [
-                  <button key="rev" type="button" className="btn btn-vibrant btn-sm" onClick={textReverse} disabled={text.length === 0}>Reverse</button>,
-                  <button key="clr" type="button" className="btn btn-vibrant btn-sm" onClick={textareaClear} disabled={text.length === 0}>Clear</button>,
-                  <button key="cpy" type="button" className="btn btn-vibrant btn-sm" onClick={textCopy} disabled={text.length === 0}>Copy</button>,
-                ]
-              )}
-            </div>
-            <div className="col-md-12 mt-3">
-              {renderButtonGroup(
-                "Advanced",
-                [
-                  <button key="rn" type="button" className="btn btn-vibrant btn-sm" onClick={removeNumbers} disabled={text.length === 0}>Remove Numbers</button>,
-                  <button key="rsc" type="button" className="btn btn-vibrant btn-sm" onClick={removeSpecialChars} disabled={text.length === 0}>Remove Special Chars</button>,
-                  <button key="ee" type="button" className="btn btn-vibrant btn-sm" onClick={extractEmails} disabled={text.length === 0}>Extract Emails</button>,
-                  <button key="b64e" type="button" className="btn btn-vibrant btn-sm" onClick={base64Encode} disabled={text.length === 0}>Base64 Encode</button>,
-                  <button key="b64d" type="button" className="btn btn-vibrant btn-sm" onClick={base64Decode} disabled={text.length === 0}>Base64 Decode</button>,
-                ]
-              )}
-            </div>
-          </div>
         </div>
 
-        <div className="glass-card">
-          <h2 className="mb-4 fw-bold">Text Statistics</h2>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <h3>Words</h3>
-              <p>{stats.wordCount}</p>
+        {/* Preview Section */}
+        <div className="col-12">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="glass-card"
+          >
+            <h4 className="fw-bold mb-3">Preview</h4>
+            <div className="p-3 rounded-3" style={{ 
+              background: isDarkMode ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.5)',
+              minHeight: '100px',
+              fontFamily: 'monospace',
+              whiteSpace: 'pre-wrap'
+            }}>
+              {text.length > 0 ? text : <span className="opacity-50 fst-italic">Nothing to preview...</span>}
             </div>
-            <div className="stat-item">
-              <h3>Characters</h3>
-              <p>{stats.charCount}</p>
-            </div>
-            <div className="stat-item">
-              <h3>Reading Time</h3>
-              <p>{(0.008 * stats.wordCount).toFixed(2)} m</p>
-            </div>
-            <div className="stat-item">
-              <h3>Sentences</h3>
-              <p>{stats.sentenceCount}</p>
-            </div>
-            <div className="stat-item">
-              <h3>Paragraphs</h3>
-              <p>{stats.paragraphCount}</p>
-            </div>
-            <div className="stat-item">
-              <h3>Avg Word Len</h3>
-              <p>{stats.avgWordLength}</p>
-            </div>
-          </div>
-          <div className="mt-3 text-center opacity-75">
-            Most common: <strong>{stats.commonWords || "N/A"}</strong>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

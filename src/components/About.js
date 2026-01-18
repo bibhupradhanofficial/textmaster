@@ -1,83 +1,76 @@
-import React from 'react'
-
-
+import React from 'react';
+import { motion } from 'framer-motion';
+import { FiCode, FiUser, FiInfo } from 'react-icons/fi';
 
 export default function About(props) {
-    let myStyle = {
-        color: props.mode === 'dark' ? 'white' : '#042743',
-        backgroundColor: props.mode === 'dark' ? '#13466e' : 'white',
-        borderColor: props.mode === 'dark' ? 'white' : ''
-    }
+    const isDark = props.mode === 'dark';
+
+    const Section = ({ title, icon: Icon, children }) => (
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card mb-4"
+        >
+            <div className="d-flex align-items-center gap-2 mb-3">
+                <Icon size={24} className="text-primary" />
+                <h3 className="h4 fw-bold mb-0">{title}</h3>
+            </div>
+            <div className={isDark ? 'text-white-50' : 'text-muted'}>
+                {children}
+            </div>
+        </motion.div>
+    );
 
     return (
-        <div className="container" style={{ color: props.mode === 'dark' ? 'white' : '' }}>
-            <h1 className="my-3">About Us</h1>
-            <div className="accordion" id="accordionExample">
-                <div className="accordion-item">
-                    <h2 className="accordion-header" id="headingOne">
-                        <button className="accordion-button" type="button" style={myStyle} data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            About TextMaster : A Text-Based Utility
-                        </button>
-                    </h2>
-                    <div id="collapseOne" className="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                        <div className="accordion-body" style={myStyle}>
-                            TextMaster is a comprehensive web-based text manipulation utility designed to streamline common text formatting and conversion tasks. The application features a clean, intuitive user interface that organizes functionalities into logical categories.
-                            <br />
-                            <br />
-                            Key features include:
-                            <br />
-                            i. Case Conversion:
-                            <br />
-                            Tools for changing text capitalization to UPPERCASE, lowercase, Title Case, Sentence case, and aLtErNaTiNg formats.
-                            <br />
-                            ii. Formatting Controls:
-                            <br />
-                            Options for layout refinement, such as Remove Spaces, Add Line Breaks, and managing line breaks.
-                            <br />
-                            iii. Text Actions:
-                            <br />
-                            Core utilities like Reverse text, clearing input fields, and easily Copy results.
-                            <br />
-                            iv. Advanced Features:
-                            <br />
-                            Specialized tools for technical use cases, including Remove Numbers, Extract Emails, and Base64 Encode functions.
-                            <br />
-                            <br />
-                            This utility provides a user-friendly, all-in-one solution for efficient text processing, demonstrating strong front-end development skills and an understanding of practical user needs.
+        <div className="container py-5">
+            <div className="text-center mb-5">
+                <h1 className="display-4 fw-bold mb-3" style={{ 
+                    background: isDark 
+                        ? 'linear-gradient(to right, #818cf8, #f472b6)' 
+                        : 'linear-gradient(to right, #6366f1, #ec4899)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                }}>
+                    About Us
+                </h1>
+            </div>
+
+            <div className="row justify-content-center">
+                <div className="col-lg-8">
+                    <Section title="What is TextMaster?" icon={FiInfo}>
+                        <p>
+                            TextMaster is a comprehensive web-based text manipulation utility designed to streamline common text formatting and conversion tasks. 
+                            The application features a clean, intuitive user interface that organizes functionalities into logical categories.
+                        </p>
+                        <ul className="list-unstyled mt-3">
+                            <li className="mb-2"><strong>• Case Conversion:</strong> Change text to UPPERCASE, lowercase, Title Case, and more.</li>
+                            <li className="mb-2"><strong>• Formatting:</strong> Remove extra spaces, manage line breaks, and clean up text.</li>
+                            <li className="mb-2"><strong>• Analytics:</strong> Get detailed insights like word count, reading time, and character stats.</li>
+                            <li className="mb-2"><strong>• Security:</strong> Base64 encoding/decoding and other utility functions.</li>
+                        </ul>
+                    </Section>
+
+                    <Section title="Developer" icon={FiUser}>
+                        <p>
+                            The TextMaster was developed by <strong>Bibhu Pradhan</strong>.
+                        </p>
+                        <p>
+                            Bibhu is a passionate programmer with a strong interest in problem-solving, logical thinking, and building efficient solutions through code.
+                        </p>
+                        <div className="d-flex gap-3 mt-3">
+                            <a href="https://www.linkedin.com/in/bibhupradhanofficial" className="btn btn-vibrant btn-sm text-white text-decoration-none">LinkedIn</a>
+                            <a href="https://github.com/bibhupradhanofficial" className="btn btn-outline-primary btn-sm text-decoration-none">GitHub</a>
                         </div>
-                    </div>
-                </div>
-                <div className="accordion-item" style={myStyle}>
-                    <h2 className="accordion-header" id="headingTwo">
-                        <button className="accordion-button collapsed" style={myStyle} type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Developed By
-                        </button>
-                    </h2>
-                    <div id="collapseTwo" className="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                        <div className="accordion-body" style={myStyle}>
-                            The TextMaster was developed by Bibhu Pradhan.
-                        </div>
-                    </div>
-                </div>
-                <div className="accordion-item">
-                    <h2 className="accordion-header" id="headingThree">
-                        <button className="accordion-button collapsed" style={myStyle} type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            About Developer
-                        </button>
-                    </h2>
-                    <div id="collapseThree" className="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                        <div className="accordion-body" style={myStyle}>
-                            Bibhu Pradhan is a passionate programmer with a strong interest in problem-solving, logical thinking, and building efficient solutions through code.
-                            <br />
-                            💻 Code | Learn | Improve | Innovate
-                            <br />
-                            <a href="https://www.linkedin.com/in/bibhupradhanofficial">LinkedIn</a>
-                            <br />
-                            <a href="https://github.com/bibhupradhanofficial">GitHub</a>
-                        </div>
-                    </div>
+                    </Section>
+
+                    <Section title="Tech Stack" icon={FiCode}>
+                        <p>
+                            Built with <strong>React.js</strong> and <strong>Bootstrap 5</strong>, enhanced with <strong>Framer Motion</strong> for smooth animations and a custom Glassmorphism design system.
+                        </p>
+                    </Section>
                 </div>
             </div>
         </div>
-    )
+    );
 }

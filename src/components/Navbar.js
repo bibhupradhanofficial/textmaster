@@ -1,22 +1,28 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FiSun, FiMoon, FiMenu } from "react-icons/fi";
 import logo from "../images/logo.png";
 
 export default function Navbar(props) {
   let location = useLocation();
 
   return (
-    <nav
-      className={`navbar navbar-expand-lg glass-navbar navbar-${props.mode}`}
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ type: "spring", stiffness: 120 }}
+      className={`navbar navbar-expand-lg navbar-custom sticky-top`}
     >
-      <div className="container-fluid">
-        <Link className="navbar-brand fw-bold" to="/" style={{ fontSize: '1.5rem', letterSpacing: '1px' }}>
-          <img
+      <div className="container">
+        <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
+          <motion.img
+            whileHover={{ rotate: 360 }}
+            transition={{ duration: 0.5 }}
             src={logo}
             alt="Logo"
-            height="30px"
-            className="d-inline-block align-text-top ms-2 me-2"
+            height="35"
           />
           {props.title}
         </Link>
@@ -29,70 +35,41 @@ export default function Navbar(props) {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span className="navbar-toggler-icon"></span>
+          <FiMenu size={24} color={props.mode === 'dark' ? 'white' : 'black'} />
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === "/" ? "active fw-bold" : ""}`}
-                aria-current="page"
-                to="/"
-              >
-                Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === "/use-cases" ? "active fw-bold" : ""}`}
-                to="/use-cases"
-              >
-                Use Cases
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === "/about" ? "active fw-bold" : ""}`}
-                to="/about"
-              >
-                About
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === "/contact" ? "active fw-bold" : ""}`}
-                to="/contact"
-              >
-                Contact
-              </Link>
-            </li>
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+            {['Home', 'Use Cases', 'About', 'Contact'].map((item) => {
+              const path = item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`;
+              return (
+                <li className="nav-item" key={item}>
+                  <Link
+                    className={`nav-link ${location.pathname === path ? "active" : ""}`}
+                    to={path}
+                  >
+                    {item}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
-          <div
-            className={`form-check form-switch text-${props.mode === "light" ? "dark" : "light"
-              } mx-4`}
-          >
-            <input
-              className="form-check-input"
-              type="checkbox"
+          
+          <div className="d-flex align-items-center">
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ rotate: 15 }}
+              className="theme-toggle"
               onClick={props.toggleMode}
-              id="flexSwitchCheckDefault"
-              style={{ cursor: 'pointer' }}
-            />
-            <label
-              className="form-check-label fw-bold"
-              htmlFor="flexSwitchCheckDefault"
+              aria-label="Toggle Theme"
             >
-              {props.mode === "light"
-                ? "Enable Dark Mode"
-                : "Disable Dark Mode"}
-            </label>
+              {props.mode === "light" ? <FiMoon size={20} /> : <FiSun size={20} />}
+            </motion.button>
           </div>
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 }
 
 Navbar.propTypes = { title: PropTypes.string.isRequired };
-
 Navbar.defaultProps = { title: "Set title here" };
